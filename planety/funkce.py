@@ -60,3 +60,18 @@ def uloz_polohy(planety: dict, historie: dict) -> dict:
         historie[jmeno].append(aktualni_poloha)
         
     return historie
+
+
+def proved_krok(planety: dict, dt: float) -> dict:
+    zrychleni = vypocet_zrychleni(planety)
+    for jmeno, data in planety.items():
+        x, y = data["position"]
+        vx, vy = data["velocity"]
+        ax, ay = zrychleni[jmeno]
+        vx += ax * dt
+        vy += ay * dt
+        x += vx * dt
+        y += vy * dt
+        data["velocity"] = [vx, vy]
+        data["position"] = [x, y]
+        return planety
