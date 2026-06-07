@@ -10,18 +10,33 @@ kde G je gravitační konstanta, m_1 a m_2 jsou hmotnosti těles a r je vzdálen
 
 Pohyb těles je počítán pomocí numerické aproximace v diskrétních časových krocích. Projekt umožňuje načítání počátečních podmínek z JSON souborů, výpočet gravitačních zrychlení a vizualizaci pohybu pomocí knihovny Matplotlib.
 
+## Instalace a spuštění
+
+1. Naklonuj repozitář:
+git clone <url repozitáře>
+2. Nainstaluj požadované knihovny:
+pip install numpy matplotlib
+3. Spusť ukázky v `examples.ipynb` pomocí Jupyter Notebooku.
+
+## Struktura repozitáře
+
+- `planety/` – knihovna se všemi funkcionalitami
+  - `funkce.py` – implementace všech funkcí
+  - `__init__.py` – exportuje veřejné API knihovny
+- `data/` – testovací data ve formátu JSON
+  - `planets.json` – počáteční podmínky planet sluneční soustavy
+  - `three_body.json` – scénář tří těles
+- `examples.ipynb` – Jupyter notebook s ukázkami použití knihovny
+
 ## Implementované funkce
 
 - načítání počátečních podmínek planet z JSON souboru
 - výpočet gravitačního zrychlení mezi všemi dvojicemi těles
-- vykreslení aktuálních poloh planet pomocí knihovny Matplotlib
-- ukládání historie poloh těles pro pozdější vykreslení trajektorií
-
-## Plánované funkce
-
-- simulace pohybu těles v čase
+- vykreslení aktuálních poloh planet
+- ukládání historie poloh těles
+- spuštění simulace po zadaný počet kroků
 - vykreslení trajektorií planet
-- vytvoření animace simulace
-- export animace do video souboru
-- generování náhodných scénářů simulace
-- experimentování s různou velikostí časového kroku
+
+## Požadované knihovny
+
+numpy, matplotlib

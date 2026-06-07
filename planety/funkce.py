@@ -7,7 +7,12 @@ G = 6.67430e-11  # gravitacni konstanta
 
 
 def nacti_planety(soubor: str) -> dict:
-    """Nacte planety ze souboru a vrati seznam planet."""
+    """
+    Nacte planety ze souboru a vrati slovnik planet.
+
+    :param soubor: cesta k JSON souboru
+    :return: slovnik ve formatu {jmeno: {'mass': float, 'position': [x, y], 'velocity': [vx, vy]}}
+    """
     f = open(soubor, 'r')
     data = json.load(f)
     f.close()
@@ -15,7 +20,12 @@ def nacti_planety(soubor: str) -> dict:
 
 
 def vypocet_zrychleni(planety: dict) -> dict:
-    """Vypocita zrychleni pusobici na kazdou planetu vlivem gravitace vsech ostatnich teles."""
+    """
+    Vypocita zrychleni pusobici na kazdou planetu vlivem gravitace vsech ostatnich teles.
+
+    :param planety: slovnik ve formatu {jmeno: {'mass': float, 'position': [x, y], 'velocity': [vx, vy]}}
+    :return: slovnik ve formatu {jmeno: [ax, ay]}
+    """
     zrychleni = {}
     for planeta, data_a in planety.items():
         ax, ay = 0.0, 0.0
@@ -63,6 +73,13 @@ def uloz_polohy(planety: dict, historie: dict) -> dict:
 
 
 def proved_krok(planety: dict, dt: float) -> dict:
+    """
+    Provede jeden casovy krok simulace - aktualizuje polohy a rychlosti vsech planet.
+
+    :param planety: slovnik ve formatu {jmeno: {'mass': float, 'position': [x, y], 'velocity': [vx, vy]}}
+    :param dt: velikost casoveho kroku v sekundach
+    :return: aktualizovany slovnik planet
+    """
     zrychleni = vypocet_zrychleni(planety)
     for jmeno, data in planety.items():
         x, y = data["position"]
@@ -74,4 +91,38 @@ def proved_krok(planety: dict, dt: float) -> dict:
         y += vy * dt
         data["velocity"] = [vx, vy]
         data["position"] = [x, y]
-        return planety
+    return planety
+
+
+def simulace(planety: dict, dt: float, kroky: int) -> dict:
+    """
+    Spusti simulaci po zadany pocet kroku a vrati historii poloh vsech planet.
+
+    :param planety: slovnik ve formatu {jmeno: {'mass': float, 'position': [x, y], 'velocity': [vx, vy]}}
+    :param dt: velikost casoveho kroku v sekundach
+    :param kroky: pocet casovych kroku simulace
+    :return: slovnik ve formatu {jmeno: [[x0, y0], [x1, y1], ...]}
+    """
+    historie = {}
+    for j in range(kroky):
+        uloz_polohy(planety, historie)
+        proved_krok(planety, dt)
+    return historie
+
+
+def vykresli_trajektorie(historie: dict) -> None:
+    """
+    Vykresli trajektorie vsech planet na zaklade ulozene historie poloh.
+
+    :param historie: slovnik ve formatu {jmeno: [[x0, y0], [x1, y1], ...]}
+    """
+    for jmeno, polohy in historie.items():
+        x = [p[0] for p in polohy]
+        y = [p[1] for p in polohy]
+        plt.plot(x, y, label=jmeno)
+        plt.plot(x[-1], y[-1], 'o')
+    plt.title("Trajektorie planet")
+    plt.xlabel("x [m]")
+    plt.ylabel("y [m]")
+    plt.legend()
+    plt.show()
